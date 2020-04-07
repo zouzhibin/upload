@@ -16,17 +16,25 @@ app.use(cors())
 app.use(express.static(path.resolve(__dirname,'public')))
 const TEMP_DIR = path.resolve(__dirname,'temp')
 const PUBLIC_DIR = path.resolve(__dirname,'public')
-app.post('/upload/:filname/:chunk_name',async function (req,res,next) {
-    let {filname,chunk_name} = req.params;
+app.post('/upload/:filname/:chunk_name/:start',async function (req,res,next) {
+    let {filname,chunk_name,start} = req.params;
     let chunk_dir = path.resolve(TEMP_DIR,filname)
     let extist = await fs.pathExists(chunk_dir)
+    let starts = Number(start)
     if(!extist){
         await fs.mkdir(chunk_dir)
     }
     let chunkFilePath = path.resolve(chunk_dir,chunk_name)
-    let ws = fs.createWriteStream(chunkFilePath,{start:0,flags:'a'})
+    let ws = fs.createWriteStream(chunkFilePath,{start:starts,flags:'a'})
     req.on('end',()=>{
-        console.log('触发了')
+        ws.close()
+        res.json({success:true,status: "1"})
+    })
+    req.on('error',()=>{
+        ws.close()
+        res.json({success:true,status: "1"})
+    })
+    req.on('close',()=>{
         ws.close()
         res.json({success:true,status: "1"})
     })

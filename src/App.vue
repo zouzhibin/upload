@@ -94,6 +94,7 @@
       createRequest(partList,uploadList,filename){
          let filterPartList = partList.filter((part)=>{
           let uploadFile = uploadList.find(item=>item.filename===part.chunk_name)
+           console.log('uploadFile===========',uploadFile)
           if(!uploadFile){
             this.$set(part,'loaded',0)
             this.$set(part,'percent',0)
@@ -102,8 +103,8 @@
             return true
           }
           if(uploadFile.size<part.chunk.size){
-            this.$set(part,'loaded',uploadList.size)
-            this.$set(part,'percent', Number(part.loaded/part.chunk.size*100).toFixed(2))
+            this.$set(part,'loaded',Number(uploadList.size))
+            this.$set(part,'percent', Number(Number(uploadList.size)/part.chunk.size*100).toFixed(2))
             //part.loaded = uploadList.size
             //part.percent = Number(part.loaded/part.chunk.size*100).toFixed(2)
             return true
@@ -114,7 +115,7 @@
         // this.partList = this.filterPartList
         console.log('filterPartList',filterPartList)
         return filterPartList.map((part)=>requests({
-          url:`/upload/${filename}/${part.chunk_name}`, // 请求的URL地址
+          url:`/upload/${filename}/${part.chunk_name}/${part.loaded}`, // 请求的URL地址
           method:'post',
           setXhr:(xhr)=>part.xhr= xhr,
           onProgress:(event)=>{
@@ -122,7 +123,7 @@
             //part.percent = Number((part.loaded+event.loaded)/part.chunk.size*100).toFixed(2)
           },
           headers:{'Content-Type':'application/octet-stream'},// 置顶请求体的格式
-          data:part.chunk //请求体
+          data:part.chunk.slice(part.loaded) //请求体
         }))
       },
       async fileAction(e){
