@@ -16,6 +16,7 @@ export default function request(options){
             xhr.setRequestHeader(key,options.headers[key])
         }
         xhr.responseType = 'json'
+        xhr.upload.onprogress = options.onProgress
         xhr.onreadystatechange = function(){
             if(xhr.readyState===4){
                 if(xhr.status===200){
@@ -23,8 +24,10 @@ export default function request(options){
                 }else{
                  reject(xhr.response)
                 }
-
             }
+        }
+        if(options.setXhr){
+            options.setXhr(xhr)
         }
         xhr.send(options.data)
     })

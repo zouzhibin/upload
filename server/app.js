@@ -52,7 +52,6 @@ app.get('/verify/:filename',async (req,res)=>{
             needUpload:false // 因为已经上传过了，所有不需要上传了，可以实现秒传的功能
         })
     }
-
     let tempDir = path.resolve(TEMP_DIR,filename)
     let exist = await fs.pathExists(tempDir)
     let uploadList = []
