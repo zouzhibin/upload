@@ -1,0 +1,17 @@
+const fs = require('fs')
+const path = require('path')
+let dir = path.resolve(__dirname,'./1.jpg')
+
+console.time('log1')
+let b = fs.readFileSync(dir)
+fs.writeFileSync(path.resolve(__dirname,'./2.jpg'),b)
+console.timeEnd('log1')
+console.time('log2',)
+console.log('b',b)
+let c = fs.createReadStream(dir)
+const upStream = fs.createWriteStream(path.resolve(__dirname,'./3.jpg'))
+c.pipe(upStream)
+console.timeEnd('log2',c)
+// console.log('c',c)
+
+// fs.writeFileSync()
